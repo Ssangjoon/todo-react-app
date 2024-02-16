@@ -1,23 +1,25 @@
-import logo from './logo.svg';
 import './App.css';
+import Todo from './Todo';
+import { useState } from 'react';
 
 function App() {
+  const [items, setItem] = useState([
+    {
+    id:"0"
+    ,title:"ssang se love da"
+    ,done:true
+  },
+  {
+    id:"1"
+    ,title:"ssang se love da2"
+    ,done:true
+  }
+]);
+  let todoItems = items.length > 0 && items.map((item) => <Todo item={item} key={item.id}/>)
+  console.table(todoItems)
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      {todoItems} 
     </div>
   );
 }
