@@ -1,11 +1,31 @@
 import './App.css';
 import Todo from './Todo';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {Container,List, Paper} from "@mui/material"
 import AddTodo from './AddTodo';
 
 function App() {
   const [items, setItems] = useState([]);
+
+  
+  useEffect(() => {
+    const requestOptions = {
+      method:"GET", 
+      headers:{"Content-Type": "application/json"}
+    }
+
+    fetch("http://localhost:8080/todo", requestOptions)
+    .then((res) => res.json())
+    .then(
+      (res) => {
+        setItems(res.data);
+      },
+      (error) => {
+  
+      }
+    )
+    
+  },[])
 
   const addItem = (item) => {
     item.id = "ID-" + items.length;
