@@ -3,44 +3,31 @@ import Todo from './Todo';
 import { useState, useEffect } from 'react';
 import {Container,List, Paper} from "@mui/material"
 import AddTodo from './AddTodo';
+import {call} from "./service/ApiService"
 
 function App() {
   const [items, setItems] = useState([]);
 
-  
+  // 첫 렌더링이 일어났을 때, 그 이후에는 배열 안의 오브젝트 값이 변할 때마다 콜백 함수를 부른다. 
   useEffect(() => {
-    const requestOptions = {
-      method:"GET", 
-      headers:{"Content-Type": "application/json"}
-    }
-
-    fetch("http://localhost:8080/todo", requestOptions)
-    .then((res) => res.json())
-    .then(
-      (res) => {
-        setItems(res.data);
-      },
-      (error) => {
-  
-      }
-    )
-    
+    call("/todo","GET",null)
+    .then(res => setItems(res.data));
   },[])
 
+
   const addItem = (item) => {
-    item.id = "ID-" + items.length;
-    item.done = false;
-    setItems([...items, item]);
-    console.log("items : ", items);
+    call("/todo", "POST", item)
+    .then(res => setItems(res.data));
   }
 
-  const editItem = () => {
-    setItems([...items]);
+  const editItem = (item) => {
+    call("/todo","PUT", item)
+    .then(res => setItems(res.data));
   }
 
   const deleteItem = (item) => {
-    const newItems = items.filter(e => e.id !== item.id);
-    setItems([...newItems]);
+    call("/todo", "DELETE", item)
+    .then(res => setItems(res.data));
   }
 
   let todoItems = items.length > 0 && (
