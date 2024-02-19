@@ -27,10 +27,11 @@ export function call(api, method, request) {
   })
 }
 
-// export function singin(userDTO){
-//   return call("/auth/sigin", "POST", userDTO)
-//   .then((res) => {
-//     console.log("response : ", res);
-//     alert("로그인 토큰: ", res.token)
-//   })
-// }
+export function signin(userDTO){
+  return call("/auth/signin", "POST", userDTO)
+  .then((res) => {
+    if(res.token){
+      window.location.href = "/";
+    }
+  })
+}
