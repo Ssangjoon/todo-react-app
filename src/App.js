@@ -1,51 +1,52 @@
 import './App.css';
-import Todo from './Todo';
 import { useState, useEffect } from 'react';
-import {Container,List, Paper} from "@mui/material"
+import { Container } from "@mui/material"
 import AddTodo from './AddTodo';
-import {call} from "./service/ApiService"
+import TodoList from './component/TodoList'; // 분리된 TodoList 컴포넌트
+import NavigationBar from './component/NavigationBar'; // 분리된 NavigationBar 컴포넌트
+import LoadingPage from './component/LoadingPage'; 
+import { call, signout } from "./service/ApiService";
 
 function App() {
   const [items, setItems] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  // 첫 렌더링이 일어났을 때, 그 이후에는 배열 안의 오브젝트 값이 변할 때마다 콜백 함수를 부른다. 
   useEffect(() => {
     call("/todo","GET",null)
-    .then(res => setItems(res.data));
-  },[])
-
+      .then(res => {
+        setItems(res.data);
+        setLoading(false); // 데이터 로딩 후 로딩 상태 업데이트
+      });
+  },[]);
 
   const addItem = (item) => {
     call("/todo", "POST", item)
-    .then(res => setItems(res.data));
+      .then(res => setItems(res.data));
   }
 
   const editItem = (item) => {
     call("/todo","PUT", item)
-    .then(res => setItems(res.data));
+      .then(res => setItems(res.data));
   }
 
   const deleteItem = (item) => {
     call("/todo", "DELETE", item)
-    .then(res => setItems(res.data));
+      .then(res => setItems(res.data));
   }
-
-  let todoItems = items.length > 0 && (
-    <Paper style={{margin:16}}>
-      <List>
-        {items.map((item) => (
-          <Todo item={item} editItem={editItem} deleteItem={deleteItem} key={item.id}/>
-        ))}
-      </List>
-    </Paper>
-  )
 
   return (
     <div className="App">
-      <Container maxWidth="md">
-        <AddTodo addItem={addItem}/>
-        <div className='TodoList'>{todoItems}</div>
-      </Container>
+      {loading ? (
+        <LoadingPage />
+      ) : (
+        <div>
+          <NavigationBar signout={signout} />
+          <Container maxWidth="md">
+            <AddTodo addItem={addItem} />
+            <TodoList items={items} editItem={editItem} deleteItem={deleteItem} />
+          </Container>
+        </div>
+      )}
     </div>
   );
 }
